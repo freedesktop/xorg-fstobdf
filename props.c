@@ -43,14 +43,14 @@ in this Software without prior written authorization from The Open Group.
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
  * THIS SOFTWARE.
  */
+/* $XFree86: xc/programs/fstobdf/props.c,v 1.6 2001/12/14 20:00:46 dawes Exp $ */
 
 #include	<stdio.h>
-#include	"FSlib.h"
+#include	<string.h>
+#include	"fstobdf.h"
 
 static char *
-AddQuotes(string, length)
-    unsigned char *string;
-    int         length;
+AddQuotes(unsigned char *string, int length)
 {
     static unsigned char new[256] = "\"";
     unsigned char *cp;
@@ -68,12 +68,11 @@ AddQuotes(string, length)
 }
 
 Bool
-EmitProperties(outFile, fontHeader, propInfo, propOffsets, propData)
-    FILE       *outFile;
-    FSXFontInfoHeader *fontHeader;
-    FSPropInfo *propInfo;
-    FSPropOffset *propOffsets;
-    unsigned char *propData;
+EmitProperties(FILE *outFile, 
+	       FSXFontInfoHeader *fontHeader, 
+	       FSPropInfo *propInfo, 
+	       FSPropOffset *propOffsets, 
+	       unsigned char *propData)
 {
     int         nProperties;
     FSPropOffset *property;
@@ -87,10 +86,10 @@ EmitProperties(outFile, fontHeader, propInfo, propOffsets, propData)
 
     nProperties = propInfo->num_offsets;
     for (property = &propOffsets[0]; nProperties--; property++) {
-	unsigned char *name;
+	char       *name;
 	int         length;
 
-	name = propData + property->name.position;
+	name = (char *)propData + property->name.position;
 	length = property->name.length;
 
 	if ((length == 12) && (!strncmp(name, "DEFAULT_CHAR", 12)))

@@ -43,27 +43,29 @@ in this Software without prior written authorization from The Open Group.
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
  * THIS SOFTWARE.
  */
+/* $XFree86: xc/programs/fstobdf/fstobdf.c,v 1.6 2001/12/14 20:00:46 dawes Exp $ */
 
 #include	<stdio.h>
-#include	"FSlib.h"
-
-extern Bool EmitHeader();
-extern Bool EmitProperties();
-extern Bool EmitCharacters();
-extern Bool EmitTrailer();
-
+#include	<stdlib.h>
+#include        <string.h>
+#include	"fstobdf.h"
 static void
-usage(progName)
-    char       *progName;
+usage(char *progName)
 {
     fprintf(stderr, "Usage: %s [-s <font server>] -fn <font name>\n",
 	    progName);
     exit(0);
 }
 
-main(argc, argv)
-    int         argc;
-    char      **argv;
+static void 
+Fail(char *progName)
+{
+    fprintf(stderr, "%s: unable to dump font\n", progName);
+    exit(1);
+}
+
+int
+main(int argc, char *argv[])
 {
     FSServer   *fontServer;
     Font        fontID,
@@ -126,11 +128,5 @@ main(argc, argv)
 
     FSFree((char *) propOffsets);
     FSFree((char *) propData);
-}
-
-Fail(progName)
-    char       *progName;
-{
-    fprintf(stderr, "%s: unable to dump font\n", progName);
-    exit(1);
+    exit (0);
 }

@@ -43,12 +43,16 @@ in this Software without prior written authorization from The Open Group.
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
  * THIS SOFTWARE.
  */
+/* $XFree86: xc/programs/fstobdf/header.c,v 3.7 2001/12/14 20:00:46 dawes Exp $ */
 
 #include	<stdio.h>
-#include	"FSlib.h"
+#include	<X11/Xosdefs.h>
+#include	<stdlib.h>
+#include	<string.h>
+#include	"fstobdf.h"
 
-long        pointSize;
-long        yResolution;
+unsigned long        pointSize;
+unsigned long        yResolution;
 
 static char *warning[] =
 {
@@ -63,12 +67,11 @@ static char *warning[] =
 };
 
 static char *
-FindStringProperty(propName, propLength, propInfo, propOffsets, propData)
-    char       *propName;
-    int        *propLength;
-    FSPropInfo *propInfo;
-    FSPropOffset *propOffsets;
-    unsigned char *propData;
+FindStringProperty(char *propName, 
+		   int *propLength, 
+		   FSPropInfo *propInfo, 
+		   FSPropOffset *propOffsets, 
+		   unsigned char *propData)
 {
     FSPropOffset *propOffset;
     int         length;
@@ -90,7 +93,7 @@ FindStringProperty(propName, propLength, propInfo, propOffsets, propData)
 #endif
 
 	    if ((propOffset->name.length == length) &&
-		    !strncmp(propData + propOffset->name.position, propName, length)) {
+		    !strncmp((char*)propData + propOffset->name.position, propName, length)) {
 		*propLength = propOffset->value.length;
 		return (char *)(propData + propOffset->value.position);
 	    }
@@ -101,12 +104,11 @@ FindStringProperty(propName, propLength, propInfo, propOffsets, propData)
 }
 
 static int
-FindNumberProperty(propName, propValue, propInfo, propOffsets, propData)
-    char       *propName;
-    int        *propValue;
-    FSPropInfo *propInfo;
-    FSPropOffset *propOffsets;
-    unsigned char *propData;
+FindNumberProperty(char *propName, 
+		   unsigned long *propValue, 
+		   FSPropInfo *propInfo, 
+		   FSPropOffset *propOffsets, 
+		   unsigned char *propData)
 {
     FSPropOffset *propOffset;
     int         i;
@@ -118,7 +120,7 @@ FindNumberProperty(propName, propValue, propInfo, propOffsets, propData)
 	if ((propOffset->type == PropTypeSigned) ||
 		(propOffset->type == PropTypeUnsigned)) {
 	    if ((propOffset->name.length == length) &&
-		    !strncmp(propData + propOffset->name.position, propName, length)) {
+		    !strncmp((char*)propData + propOffset->name.position, propName, length)) {
 		*propValue = propOffset->value.position;
 		return (propOffset->type);
 	    }
@@ -132,12 +134,11 @@ FindNumberProperty(propName, propValue, propInfo, propOffsets, propData)
  * FONTBOUNDINGBOX lines
  */
 Bool
-EmitHeader(outFile, fontHeader, propInfo, propOffsets, propData)
-    FILE       *outFile;
-    FSXFontInfoHeader *fontHeader;
-    FSPropInfo *propInfo;
-    FSPropOffset *propOffsets;
-    unsigned char *propData;
+EmitHeader(FILE *outFile, 
+	   FSXFontInfoHeader *fontHeader, 
+	   FSPropInfo *propInfo, 
+	   FSPropOffset *propOffsets, 
+	   unsigned char *propData)
 {
     int         len;
     int         type;
@@ -196,7 +197,8 @@ EmitHeader(outFile, fontHeader, propInfo, propOffsets, propData)
 	pointSize = ((fontHeader->font_ascent + fontHeader->font_descent)
 		     * 72) / yResolution;
 
-    fprintf(outFile, "SIZE %d %d %d\n", pointSize, xResolution, yResolution);
+    fprintf(outFile, "SIZE %lu %lu %lu\n", pointSize, xResolution, 
+	    yResolution);
 
     /*
      * FONTBOUNDINGBOX width height xoff yoff
