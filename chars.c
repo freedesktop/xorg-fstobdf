@@ -43,15 +43,21 @@ in this Software without prior written authorization from The Open Group.
  * ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
  * THIS SOFTWARE.
  */
+/* $XFree86: xc/programs/fstobdf/chars.c,v 3.8 2001/12/14 20:00:45 dawes Exp $ */
+
+/* Morten Storgaard Nielsen: chars.c,v 3.2-1 2000/01/30 14:11:19 kat Exp */
 
 #include	<stdio.h>
 #include	<X11/Xlib.h>
-#include	"FSlib.h"
+#include	"fstobdf.h"
 
 extern long yResolution;	/* intended vertical resoultion for font */
 extern long pointSize;		/* font height in points */
 
 #define BIT_ORDER	BitmapFormatBitOrderMSB
+#ifdef BYTE_ORDER
+#undef BYTE_ORDER
+#endif
 #define BYTE_ORDER	BitmapFormatByteOrderMSB
 #define SCANLINE_UNIT	BitmapFormatScanlineUnit8
 #define SCANLINE_PAD	BitmapFormatScanlinePad8
@@ -68,13 +74,12 @@ extern long pointSize;		/* font height in points */
 
 
 static void
-EmitBitmap(outFile, fontHeader, charInfo, encoding, bpr, data)
-    FILE       *outFile;
-    FSXFontInfoHeader *fontHeader;
-    FSXCharInfo *charInfo;
-    unsigned int encoding;
-    int         bpr;
-    unsigned char *data;
+EmitBitmap(FILE *outFile, 
+	   FSXFontInfoHeader *fontHeader, 
+	   FSXCharInfo *charInfo, 
+	   unsigned int encoding, 
+	   int bpr, 
+	   unsigned char *data)
 {
     char       *glyphName;
     unsigned int row;
@@ -114,7 +119,7 @@ EmitBitmap(outFile, fontHeader, charInfo, encoding, bpr, data)
 	    charInfo->left,
 	    -charInfo->descent);
     if (charInfo->attributes)
-	fprintf(outFile, "ATTRIBUTES 0x%04x\n", charInfo->attributes);
+	fprintf(outFile, "ATTRIBUTES %04x\n", charInfo->attributes);
 
     /*
      * emit the bitmap
@@ -148,11 +153,10 @@ EmitBitmap(outFile, fontHeader, charInfo, encoding, bpr, data)
 
 
 Bool
-EmitCharacters(outFile, fontServer, fontHeader, fontID)
-    FILE       *outFile;
-    FSServer   *fontServer;
-    FSXFontInfoHeader *fontHeader;
-    Font        fontID;
+EmitCharacters(FILE *outFile, 
+	       FSServer *fontServer, 
+	       FSXFontInfoHeader *fontHeader, 
+	       Font fontID)
 {
     FSXCharInfo *extents;
     FSXCharInfo *charInfo;
@@ -161,19 +165,22 @@ EmitCharacters(outFile, fontServer, fontHeader, fontID)
     unsigned char *glyph;
     unsigned char *glyphs;
     unsigned int nChars;
-    int         firstChar;
-    int         lastChar;
-    int         ch;
+    int         firstCharLow;
+    int         firstCharHigh;
+    int         lastCharLow;
+    int         lastCharHigh;
+    int         chLow;
+    int         chHigh;
     FSBitmapFormat format;
 
     nChars = 0;
 
     format = BYTE_ORDER | BIT_ORDER | SCANLINE_UNIT |
 	SCANLINE_PAD | EXTENTS;
-    firstChar = (fontHeader->char_range.min_char.high << 8)
-	        + fontHeader->char_range.min_char.low;
-    lastChar = (fontHeader->char_range.max_char.high << 8)
-	       + fontHeader->char_range.max_char.low;
+    firstCharLow = fontHeader->char_range.min_char.low; 
+    firstCharHigh = fontHeader->char_range.min_char.high; 
+    lastCharLow = fontHeader->char_range.max_char.low;
+    lastCharHigh = fontHeader->char_range.max_char.high;
 
     (void) FSQueryXExtents16(fontServer, fontID, True, (FSChar2b *) 0, 0,
 			     &extents);
@@ -182,10 +189,12 @@ EmitCharacters(outFile, fontServer, fontHeader, fontID)
 
     charInfo = extents;
     /* calculate the actual number of chars */
-    for (ch = 0; ch <= (lastChar - firstChar); ch++) {
+    for (chHigh = 0; chHigh <= (lastCharHigh-firstCharHigh); chHigh++) {
+      for (chLow = 0; chLow <= (lastCharLow-firstCharLow); chLow++) {
 	if ((charInfo->width != 0) || (charInfo->left != charInfo->right))
 	    nChars++;
 	charInfo++;
+      }
     }
 
     fprintf(outFile, "CHARS %u\n", nChars);
@@ -194,19 +203,19 @@ EmitCharacters(outFile, fontServer, fontHeader, fontID)
      * actually emit the characters
      */
     charInfo = extents;
-    encoding = firstChar;
     glyph = glyphs;
-    for (ch = 0; ch <= (lastChar - firstChar); ch++) {
+    for (chHigh = firstCharHigh; chHigh <= lastCharHigh; chHigh++) {
+      for (chLow = firstCharLow; chLow <= lastCharLow; chLow++) {
 	int         bpr;
 
 	bpr = GLWIDTHBYTESPADDED((charInfo->right - charInfo->left),
 				 SCANLINE_PAD_BYTES);
+  	  encoding=(chHigh << 8)+chLow;
 	if ((charInfo->width != 0) || (charInfo->right != charInfo->left))
 	    EmitBitmap(outFile, fontHeader, charInfo, encoding, bpr, glyph);
 	glyph += (charInfo->descent + charInfo->ascent) * bpr;
-
 	charInfo++;
-	encoding++;
+      }
     }
     FSFree((char *) extents);
     FSFree((char *) glyphs);
