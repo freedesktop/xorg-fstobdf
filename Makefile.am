@@ -21,8 +21,8 @@
 
 bin_PROGRAMS = fstobdf
 
-fstobdf_CFLAGS = $(DEP_CFLAGS)
-fstobdf_LDADD = $(DEP_LIBS)
+fstobdf_CFLAGS = $(FSTOBDF_CFLAGS)
+fstobdf_LDADD = $(FSTOBDF_LIBS)
 
 fstobdf_SOURCES =	\
         chars.c \
