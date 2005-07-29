@@ -22,7 +22,7 @@ dnl
 dnl Process this file with autoconf to create configure.
 
 AC_PREREQ([2.57])
-AC_INIT(fstobdf,[7.0], [xorg@freedesktop.org],fstobdf)
+AC_INIT(fstobdf,[0.99.0], [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],fstobdf)
 AM_INIT_AUTOMAKE([dist-bzip2])
 AM_MAINTAINER_MODE
 
@@ -35,5 +35,7 @@ AC_PROG_INSTALL
 PKG_CHECK_MODULES(FSTOBDF, x11 libfs)
 AC_SUBST(FSTOBDF_CFLAGS)
 AC_SUBST(FSTOBDF_LIBS)
+
+XORG_RELEASE_VERSION
 
 AC_OUTPUT([Makefile])
