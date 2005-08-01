@@ -31,6 +31,6 @@ fstobdf_SOURCES =	\
         header.c \
         props.c
 
-dist_man_MANS = \
+dist_man1_MANS = \
         fstobdf.man
 
