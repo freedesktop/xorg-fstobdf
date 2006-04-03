@@ -1,5 +1,5 @@
 /* $Xorg: chars.c,v 1.4 2001/02/09 02:05:30 xorgcvs Exp $ */
-/* $XdotOrg: $ */
+/* $XdotOrg: app/fstobdf/chars.c,v 1.3 2005/10/31 16:05:45 alanc Exp $ */
 /*
  
 Copyright 1990, 1998  The Open Group
@@ -214,7 +214,8 @@ EmitCharacters(FILE *outFile,
   	  encoding=(chHigh << 8)+chLow;
 	if ((charInfo->width != 0) || (charInfo->right != charInfo->left))
 	    EmitBitmap(outFile, fontHeader, charInfo, encoding, bpr, glyph);
-	glyph += (charInfo->descent + charInfo->ascent) * bpr;
+	glyph = glyphs +
+	    offsets[encoding-((firstCharHigh << 8)+firstCharLow) + 1].position;
 	charInfo++;
       }
     }
