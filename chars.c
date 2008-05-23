@@ -52,9 +52,6 @@ in this Software without prior written authorization from The Open Group.
 #include	<X11/Xlib.h>
 #include	"fstobdf.h"
 
-extern unsigned long yResolution; /* intended vertical resoultion for font */
-extern unsigned long pointSize;	  /* font height in points */
-
 #define BIT_ORDER	BitmapFormatBitOrderMSB
 #ifdef BYTE_ORDER
 #undef BYTE_ORDER
