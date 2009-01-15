@@ -18,3 +18,7 @@ install-sh
 missing
 stamp-h1
 *~
+*.o
+fstobdf-*.tar.*
+ChangeLog
+tags
