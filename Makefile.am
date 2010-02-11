@@ -21,7 +21,7 @@
 
 bin_PROGRAMS = fstobdf
 
-AM_CFLAGS = $(FSTOBDF_CFLAGS)
+AM_CFLAGS = $(FSTOBDF_CFLAGS) $(CWARNFLAGS)
 fstobdf_LDADD = $(FSTOBDF_LIBS)
 
 fstobdf_SOURCES =	\
