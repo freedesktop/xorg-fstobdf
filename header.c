@@ -52,7 +52,7 @@ in this Software without prior written authorization from The Open Group.
 unsigned long        pointSize;
 unsigned long        yResolution;
 
-static char *warning[] =
+static const char *warning[] =
 {
     "COMMENT  ",
     "COMMENT  WARNING:  This bdf file was generated from a font server using",
@@ -65,7 +65,7 @@ static char *warning[] =
 };
 
 static char *
-FindStringProperty(char *propName, 
+FindStringProperty(const char *propName,
 		   int *propLength, 
 		   FSPropInfo *propInfo, 
 		   FSPropOffset *propOffsets, 
@@ -102,7 +102,7 @@ FindStringProperty(char *propName,
 }
 
 static int
-FindNumberProperty(char *propName, 
+FindNumberProperty(const char *propName,
 		   unsigned long *propValue, 
 		   FSPropInfo *propInfo, 
 		   FSPropOffset *propOffsets, 
@@ -141,7 +141,7 @@ EmitHeader(FILE *outFile,
     int         len;
     int         type;
     char       *cp;
-    char      **cpp;
+    const char **cpp;
     unsigned long xResolution;
 
     fprintf(outFile, "STARTFONT 2.1\n");
