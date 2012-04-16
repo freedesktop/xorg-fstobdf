@@ -47,7 +47,9 @@ in this Software without prior written authorization from The Open Group.
 #include	<stdlib.h>
 #include        <string.h>
 #include	"fstobdf.h"
-static void
+
+
+static void _X_NORETURN
 usage(char *progName)
 {
     fprintf(stderr, "Usage: %s [-s <font server>] -fn <font name>\n",
@@ -55,7 +57,7 @@ usage(char *progName)
     exit(0);
 }
 
-static void
+static void _X_NORETURN
 Fail(char *progName)
 {
     fprintf(stderr, "%s: unable to dump font\n", progName);
