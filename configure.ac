@@ -36,7 +36,7 @@ XORG_DEFAULT_OPTIONS
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for pkg-config packages
-PKG_CHECK_MODULES(FSTOBDF, [xproto >= 7.0.17 x11 libfs])
+PKG_CHECK_MODULES(FSTOBDF, [xproto >= 7.0.25 x11 libfs])
 
 AC_CONFIG_FILES([
 	Makefile
