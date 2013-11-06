@@ -43,6 +43,10 @@ in this Software without prior written authorization from The Open Group.
  * THIS SOFTWARE.
  */
 
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include	<stdio.h>
 #include	<stdlib.h>
 #include        <string.h>
@@ -54,8 +58,10 @@ usage(const char *progName, const char *msg)
 {
     if (msg)
         fprintf(stderr, "%s: %s\n", progName, msg);
-    fprintf(stderr, "Usage: %s [-server <font server>] -fn <font name>\n",
-	    progName);
+    fprintf(stderr,
+	    "Usage: %s [-server <font server>] -fn <font name>\n"
+	    "	or: %s -version\n",
+	    progName, progName);
     exit(0);
 }
 
@@ -98,6 +104,10 @@ main(int argc, char *argv[])
 		fontName = argv[i];
 	    else
 		usage(argv[0], "-fn requires an argument");
+	}
+	else if (!strcmp(argv[i], "-version")) {
+	    printf("%s\n", PACKAGE_STRING);
+	    exit(0);
 	}
     }
 
