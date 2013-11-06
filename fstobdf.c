@@ -52,7 +52,7 @@ in this Software without prior written authorization from The Open Group.
 static void _X_NORETURN
 usage(char *progName)
 {
-    fprintf(stderr, "Usage: %s [-s <font server>] -fn <font name>\n",
+    fprintf(stderr, "Usage: %s [-server <font server>] -fn <font name>\n",
 	    progName);
     exit(0);
 }
