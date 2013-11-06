@@ -109,6 +109,11 @@ main(int argc, char *argv[])
 	    printf("%s\n", PACKAGE_STRING);
 	    exit(0);
 	}
+	else {
+	    fprintf(stderr, "%s: unrecognized option '%s'\n",
+		    argv[0], argv[i]);
+	    usage(argv[0], NULL);
+	}
     }
 
     if (fontName == NULL)
